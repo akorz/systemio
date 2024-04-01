@@ -1,0 +1,22 @@
+### Calculate Price
+POST http://127.0.0.1:80/calculate-price
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
+  "taxNumber": "DE123567891",
+  "couponCode": "P10"
+}
+
+### Execute Purchase
+POST http://127.0.0.1:80/purchase
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
+  "taxNumber": "DE123567891",
+  "couponCode": "A50",
+  "paymentProcessor": "paypal"
+}

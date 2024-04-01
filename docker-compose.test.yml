@@ -1,0 +1,41 @@
+version: '3.6'
+services:
+
+  app:
+    build:
+      dockerfile: ./app/Dockerfile
+      args:
+        UID: ${USER_ID}
+        GID: ${GROUP_ID}
+    image: app
+    container_name: ${DOCKER_CONTAINER_PREFIX}_${PROJECT_NAME}_test_app
+    command: php-fpm -R
+    volumes:
+      - ./app/src:/var/www/html
+      - var_data:/var/www/html/var
+    user: ${GROUP_ID}:${USER_ID}
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    restart: always
+
+  mysql:
+    image: mysql:${DOCKER_MYSQL_VERSION:-8.3.0}
+    container_name: ${DOCKER_CONTAINER_PREFIX}_${PROJECT_NAME}_test_mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    user: ${GROUP_ID}:${USER_ID}
+    environment:
+      - TZ="UTC"
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD:-password}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-app}
+      - MYSQL_ROOT_HOST="%"
+    command: --default-authentication-plugin=mysql_native_password --lower_case_table_names=1
+    restart: always
+
+volumes:
+  var_data:
+  mysql_data:
